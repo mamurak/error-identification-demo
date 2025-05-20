@@ -1,3 +1,4 @@
+---
 version: 3
 domain: Software
 created_by: mamurak
@@ -126,37 +127,37 @@ seed_examples:
 
       ## **OpenAPI Spec**
       ```
-      openapi: 3.0.0  
-      info:  
-        title: AML Validation Service  
-        version: 1.0.0  
-        description: \>  
+      openapi: 3.0.0
+      info:
+        title: AML Validation Service
+        version: 1.0.0
+        description: \>
           The AML Validation Service evaluates a customer's anti-money
            laundering (AML)
           risk by scoring their identity details and matching
            them against watchlists.
 
-      paths:  
-        /:  
-          post:  
-            summary: Validate a customer's AML risk profile  
-            requestBody:  
-              required: true  
-              content:  
-                application/json:  
-                  schema:  
-                    $ref: '\#/components/schemas/AmlValidationRequest'  
-            responses:  
-              '200':  
-                description: AML check completed successfully  
-                content:  
-                  application/json:  
-                    schema:  
-                      $ref: '\#/components/schemas/AmlValidationResponse'  
-              '400':  
-                description: Invalid input data  
-                content:  
-                  application/json:  
+      paths:
+        /:
+          post:
+            summary: Validate a customer's AML risk profile
+            requestBody:
+              required: true
+              content:
+                application/json:
+                  schema:
+                    $ref: '\#/components/schemas/AmlValidationRequest'
+            responses:
+              '200':
+                description: AML check completed successfully
+                content:
+                  application/json:
+                    schema:
+                      $ref: '\#/components/schemas/AmlValidationResponse'
+              '400':
+                description: Invalid input data
+                content:
+                  application/json:
                     schema:
       ```
     questions_and_answers:
@@ -196,16 +197,16 @@ seed_examples:
 
       ### **Request Schema:**
 
-      * `customerId` (string)  
-      * `fullName` (string)  
-      * `nationalId` (string)  
+      * `customerId` (string)
+      * `fullName` (string)
+      * `nationalId` (string)
       * `birthDate` (date)
 
       ### **Response Fields:**
 
-      * `status`: `VERIFIED`, `FAILED`, or `REVIEW_REQUIRED`  
-      * `verificationScore`: integer (0–100)  
-      * `failureReason`, `reviewComment`: string (optional)  
+      * `status`: `VERIFIED`, `FAILED`, or `REVIEW_REQUIRED`
+      * `verificationScore`: integer (0–100)
+      * `failureReason`, `reviewComment`: string (optional)
       * `timestamp`: ISO-8601
 
       ---
@@ -216,7 +217,7 @@ seed_examples:
 
       **Symptoms:**
 
-      * Empty or malformed request payload  
+      * Empty or malformed request payload
       * Missing required fields
 
       **Logs:**
@@ -228,12 +229,12 @@ seed_examples:
 
       **Root Causes:**
 
-      * Client-side form submission error  
+      * Client-side form submission error
       * Incorrect JSON formatting (e.g., using single quotes, missing commas)
 
       **Resolution:**
 
-      * Ensure all required fields are populated  
+      * Ensure all required fields are populated
       * Validate request body using a linter or Postman before submitting
 
       ---
@@ -253,12 +254,12 @@ seed_examples:
 
       **Root Causes:**
 
-      * Camel REST route not correctly defined or not deployed  
+      * Camel REST route not correctly defined or not deployed
       * OpenShift Route misconfigured
 
       **Resolution:**
 
-      * Confirm route configuration in Camel YAML DSL  
+      * Confirm route configuration in Camel YAML DSL
       * Run `oc get routes` and verify exposed service path
 
       ---
@@ -279,12 +280,12 @@ seed_examples:
 
       **Root Causes:**
 
-      * Backend system (e.g., registry API) unavailable  
+      * Backend system (e.g., registry API) unavailable
       * Null reference in identity processing logic
 
       **Resolution:**
 
-      * Add null checks and fallback values in route logic  
+      * Add null checks and fallback values in route logic
       * Ensure downstream services are healthy
     questions_and_answers:
       - question: |
@@ -304,8 +305,8 @@ seed_examples:
            YAML DSL route definition and check whether the correct route URL is
            used by comparing with the output of `oc get routes`.
       - question: |
-          The IdentityValidationService returns HTTP code 500. What went wrong, and
-           how can I fix this?
+          The IdentityValidationService returns HTTP code 500. What went wrong,
+           and how can I fix this?
         answer: |
           The IdentityValidationService returns HTTP code 500 in case of
            unavailable backend components or null references within the logic
