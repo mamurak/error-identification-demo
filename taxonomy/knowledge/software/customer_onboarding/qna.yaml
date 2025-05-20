@@ -1,85 +1,351 @@
 version: 3
 domain: Software
-created_by: Red Hat AI SSA
+created_by: mamurak
 seed_examples:
   - context: |
-      
+      ## **Overview**
+      The **AmlValidationService** evaluates the anti-money laundering (AML)
+       risk of customers by scoring them based on their identity attributes and
+       checking against known watchlists. This is part of the customer
+       onboarding KYC pipeline in a banking context.
+      ---
+      ## **API Endpoint**
+      **POST** `/`
+      ### **Request Schema:**
+      * `customerId` (string)
+      * `fullName` (string)
+      * `nationalId` (string)
+      * `birthDate` (date)
+      ### **Response Fields:**
+      * `status`: `PASS` or `FAIL`
+      * `riskScore`: Integer (0–100)
+      * `riskLevel`: `LOW`, `MEDIUM`, `HIGH`
+      * `matchedWatchlists`: Array of matching entries
+      * `timestamp`: ISO-8601
+      ---
+      ## **Common Error Patterns**
+      ### **1\. HTTP 400 Bad Request**
+      **Symptoms:**
+      * Malformed JSON or missing required fields
+      **Logs:**
+      ```
+      ERROR [aml-service] - Missing required input: customerId
+      ```
+      **Root Causes:**
+      * Client sends incomplete or improperly formatted payload
+      **Resolution:**
+      * Validate all required fields are included and types are correct
+      ---
+      ### **2\. HTTP 404 Not Found**
+      **Symptoms:**
+      * Endpoint returns 404
+      **Logs:**
+      ```
+      WARN [platform-http] - No consumers available on endpoint:
+       platform-http:/
+      ```
+      **Root Causes:**
+      * Camel route not active or incorrectly mapped
+      **Resolution:**
+      * Check YAML DSL route definition, ensure `path: /` matches actual
+       request URL
+      ---
+      ### **3\. HTTP 500 Internal Server Error**
+      **Symptoms:**
+      * Runtime failure during  external service dependency failure
+      **Logs:**
+      ```
+      ERROR [camel] - Error evaluating choice block:
+       java.lang.NullPointerException
+      ```
+      **Root Causes:**
+      * Incorrect use of Camel Simple expressions (`random()` or string
+       interpolation)
+      * Unexpected downstream error
+      **Resolution:**
+      * Add fallback logic for downstream errors
     questions_and_answers:
       - question: |
-          
+          The AmlValidationService returns HTTP code 400. What went wrong, and
+           how can I fix this?
         answer: |
-          
+          The AmlValidationService returns HTTP 400 if the incoming request
+           payload is incomplete or improperly formatted. Ensure that the
+           payload sent by the client contains all required fields and its
+           value types are correct.
       - question: |
-          
+          The AmlValidationService returns HTTP code 404. What went wrong, and
+           how can I fix this?
         answer: |
-          
+          The AmlValidationService returns HTTP 404 if the Camel route is
+           inactive or not mapped correctly. Validate the YAML DSL route
+           definition and check whether the correct route URL is used.
       - question: |
-          
+          The AmlValidationService returns HTTP code 500. What went wrong, and
+           how can I fix this?
         answer: |
-          
+          The AmlValidationService returns HTTP code 500 in case of incorrect
+           Camel expressions or downstream processing errors. This should be
+           addressed by ensuring correct fallback for downstream processing.
   - context: |
-      
+      ## **Log Interpretation Guide**
+
+      | Log Pattern | Meaning | Suggested Action |
+      | ----- | ----- | ----- |
+      | `Evaluating AML validation outcome...` | Request successfully reached
+       the route | Continue |
+      | `No consumers available` | Route is not registered for that path |
+       Check Camel route URI |
+      | `NullPointerException` in mock logic | Incorrect JSON template or
+       unquoted interpolation | Check indentation and syntax |
     questions_and_answers:
       - question: |
-          
+          I'm seeing a log entry starting with "Evaluating AML validation
+           outcome". Does this indicate an issue that I should fix?
         answer: |
-          
+          This log pattern occurs if the client request has been routed
+           successfully. No action needs to be taken.
       - question: |
-          
+          I'm seeing the following log entry: "No consumers available". Does
+           this indicate an issue that I should fix?
         answer: |
-          
+          Yes, this log usually occurs if the path is not associated with a
+           registered route. Double check the Camel route URI.
       - question: |
-          
+          I'm seeing a log with a NullPointerException. Does this indicate an
+           issue that I should fix?
         answer: |
-          
+          Yes, a NullPointerException is typically logged if JSON template is
+           incorrect or there's interpolation that hasn't been quoted. You
+           should double check the syntax and indentation.
   - context: |
-      
+      ## **Contact**
+
+      Reach the AML Validation engineering team via `#aml-risk-devs` Slack
+       channel or log a ticket in the `AML-SVC` JIRA project.
+
+      ## **OpenAPI Spec**
+      ```
+      openapi: 3.0.0  
+      info:  
+        title: AML Validation Service  
+        version: 1.0.0  
+        description: \>  
+          The AML Validation Service evaluates a customer's anti-money
+           laundering (AML)
+          risk by scoring their identity details and matching
+           them against watchlists.
+
+      paths:  
+        /:  
+          post:  
+            summary: Validate a customer's AML risk profile  
+            requestBody:  
+              required: true  
+              content:  
+                application/json:  
+                  schema:  
+                    $ref: '\#/components/schemas/AmlValidationRequest'  
+            responses:  
+              '200':  
+                description: AML check completed successfully  
+                content:  
+                  application/json:  
+                    schema:  
+                      $ref: '\#/components/schemas/AmlValidationResponse'  
+              '400':  
+                description: Invalid input data  
+                content:  
+                  application/json:  
+                    schema:
+      ```
     questions_and_answers:
       - question: |
-          
+          What is the purpose of the AML Validation Service?
         answer: |
-          
+          The AML Validation Service scores a customer's anti-money laundering
+           risk by assessing their identity information and comparing them
+           against watchlists.
       - question: |
-          
+          Which requests does the AML Validation Service support?
         answer: |
-          
+          The AML Validation Service supports POST requests to trigger a
+           customer's risk validation.
       - question: |
-          
+          What does it mean if the AML Validation Service returns HTTP code
+           400?
         answer: |
-          
+          The AML Validation Service returns HTTP code 400 if the request
+           payload is invalid.
   - context: |
-      
+      # **IdentityValidationService Technical Documentation**
+
+      ## **Overview**
+
+      The **IdentityValidationService** is responsible for validating customer
+       identity documents such as national IDs or passports. It is used in KYC
+       (Know Your Customer) workflows in banking systems. The service exposes a
+       REST endpoint `/validate` that accepts a JSON payload with customer
+       identity details and returns a validation result.
+
+      ---
+
+      ## **API Endpoint**
+
+      **POST** `/validate`
+
+      ### **Request Schema:**
+
+      * `customerId` (string)  
+      * `fullName` (string)  
+      * `nationalId` (string)  
+      * `birthDate` (date)
+
+      ### **Response Fields:**
+
+      * `status`: `VERIFIED`, `FAILED`, or `REVIEW_REQUIRED`  
+      * `verificationScore`: integer (0–100)  
+      * `failureReason`, `reviewComment`: string (optional)  
+      * `timestamp`: ISO-8601
+
+      ---
+
+      ## **Common Error Patterns**
+
+      ### **1\. HTTP 400 Bad Request**
+
+      **Symptoms:**
+
+      * Empty or malformed request payload  
+      * Missing required fields
+
+      **Logs:**
+
+      ```
+      ERROR [validation] - Missing field 'nationalId'
+      ERROR [json] - Cannot deserialize value...
+      ```
+
+      **Root Causes:**
+
+      * Client-side form submission error  
+      * Incorrect JSON formatting (e.g., using single quotes, missing commas)
+
+      **Resolution:**
+
+      * Ensure all required fields are populated  
+      * Validate request body using a linter or Postman before submitting
+
+      ---
+
+      ### **2\. HTTP 404 Not Found**
+
+      **Symptoms:**
+
+      * Service route is unreachable
+
+      **Logs:**
+
+      ```
+      WARN [platform-http] - No consumers available on endpoint:
+       platform-http:/validate
+      ```
+
+      **Root Causes:**
+
+      * Camel REST route not correctly defined or not deployed  
+      * OpenShift Route misconfigured
+
+      **Resolution:**
+
+      * Confirm route configuration in Camel YAML DSL  
+      * Run `oc get routes` and verify exposed service path
+
+      ---
+
+      ### **3\. HTTP 500 Internal Server Error**
+
+      **Symptoms:**
+
+      * Service returns error with no obvious client fault
+
+      **Logs:**
+
+      ```
+      ERROR [identity-service] - Unexpected exception occurred:
+       java.lang.NullPointerException
+      ERROR [camel] - Error during route processing
+      ```
+
+      **Root Causes:**
+
+      * Backend system (e.g., registry API) unavailable  
+      * Null reference in identity processing logic
+
+      **Resolution:**
+
+      * Add null checks and fallback values in route logic  
+      * Ensure downstream services are healthy
     questions_and_answers:
       - question: |
-          
+          The IdentityValidationService returns HTTP code 400. What went wrong,
+           and how can I fix this?
         answer: |
-          
+          The IdentityValidationService returns HTTP 400 in case of client-side
+           request issues. Ensure that the payload sent by the client contains
+           all required fields and validate the payload via a linter or a tool
+           like Postman.
       - question: |
-          
+          The IdentityValidationService returns HTTP code 404. What went wrong,
+           and how can I fix this?
         answer: |
-          
+          The IdentityValidationService returns HTTP 404 if the Camel route is
+           inactive or the route in OpenShift is misconfigured. Validate the
+           YAML DSL route definition and check whether the correct route URL is
+           used by comparing with the output of `oc get routes`.
       - question: |
-          
+          The IdentityValidationService returns HTTP code 500. What went wrong, and
+           how can I fix this?
         answer: |
-          
+          The IdentityValidationService returns HTTP code 500 in case of
+           unavailable backend components or null references within the logic
+           of identity processing. Double check null handling within the service
+           and verify the downstream components are up and running.
   - context: |
-      
+      ## **Log Interpretation Guide**
+
+      | Log Pattern | Meaning | Suggested Action |
+      | ----- | ----- | ----- |
+      | `Missing field 'X'` | Input JSON did not include a required field |
+       Fix client request |
+      | `No consumers available` | No route matching the HTTP call | Check
+       Camel route URI |
+      | `Error calling downstream service` | HTTP call to AML/KYC failed |
+       Check URL, service availability |
     questions_and_answers:
       - question: |
-          
+          I'm seeing a log entry with the following pattern: "Missing field".
+           Does this indicate an issue that I should fix?
         answer: |
-          
+          Yes, this log entry indicates that there's a missing field within
+           the incoming JSON. Double check the client's request.
       - question: |
-          
+          I'm seeing the following log entry: "No consumers available". Does
+           this indicate an issue that I should fix?
         answer: |
-          
+          Yes, this log usually occurs if HTTP call does not match any
+           available routes. Double check the Camel route URI.
       - question: |
-          
+          I'm seeing a log that states: "Error calling downstream service".
+           Does this indicate an issue that I should fix?
         answer: |
-          
-document_outline: Technical documentation of the onboarding application
+          Yes, this entry is logged whenever a call to the AML or KYC
+           components fails. Verify that the corresponding URLs are correct
+           and that these services are available.
+document_outline: |
+  Technical documentation of the customer onboarding application
 document:
   repo: https://github.com/mamurak/error-identification-demo.git
-  commit: e876237d604ac31027efae8a3be096135ea92d06
+  commit: 2b0d191f5aa3a1b594fed88ad4f25852c310adce
   patterns:
-    - "source_docs/customer-onboarding-app-documentation.md"
+    - "source_docs/onboarding-application.md"
