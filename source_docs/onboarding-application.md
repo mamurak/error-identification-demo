@@ -114,7 +114,7 @@ ERROR [camel] - Error evaluating choice block: java.lang.NullPointerException
 Reach the AML Validation engineering team via `#aml-risk-devs` Slack channel or log a ticket in the `AML-SVC` JIRA project.
 
 ## **OpenAPI Spec**
-
+```
 openapi: 3.0.0  
 info:  
   title: AML Validation Service  
@@ -145,6 +145,7 @@ paths:
           content:  
             application/json:  
               schema:
+```
 
 # **IdentityValidationService Technical Documentation**
 
@@ -268,7 +269,7 @@ ERROR [camel] - Error during route processing
 For production incidents, contact the Identity Validation Service team via `#kyc-platform-support` or raise a JIRA ticket in `BANK-IDVAL` project.
 
 ## IdentityValidationService OpenAPI
-
+```
 openapi: 3.0.0  
 info:  
   title: Identity Validation Service  
@@ -387,4 +388,4 @@ components:
         timestamp:  
           type: string  
           format: date-time
-
+```
