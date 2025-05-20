@@ -1,0 +1,85 @@
+version: 3
+domain: Software
+created_by: Red Hat AI SSA
+seed_examples:
+  - context: |
+      
+    questions_and_answers:
+      - question: |
+          
+        answer: |
+          
+      - question: |
+          
+        answer: |
+          
+      - question: |
+          
+        answer: |
+          
+  - context: |
+      
+    questions_and_answers:
+      - question: |
+          
+        answer: |
+          
+      - question: |
+          
+        answer: |
+          
+      - question: |
+          
+        answer: |
+          
+  - context: |
+      
+    questions_and_answers:
+      - question: |
+          
+        answer: |
+          
+      - question: |
+          
+        answer: |
+          
+      - question: |
+          
+        answer: |
+          
+  - context: |
+      
+    questions_and_answers:
+      - question: |
+          
+        answer: |
+          
+      - question: |
+          
+        answer: |
+          
+      - question: |
+          
+        answer: |
+          
+  - context: |
+      
+    questions_and_answers:
+      - question: |
+          
+        answer: |
+          
+      - question: |
+          
+        answer: |
+          
+      - question: |
+          
+        answer: |
+          
+document_outline: Technical documentation of the onboarding application
+document:
+  repo: https://github.com/mamurak/error-identification-demo.git
+  commit: e876237d604ac31027efae8a3be096135ea92d06
+  patterns:
+    - "source_docs/customer-onboarding-app-documentation.md"
