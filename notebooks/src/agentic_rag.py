@@ -113,7 +113,7 @@ def search_status_for_client(agent, client_id, age_in_minutes=60):
     user_prompts = [
         f"Parse the available logs over the past {age_in_minutes} minutes and identify all entries that reference the customer ID {client_id}. Do not treat the ID as a search query—scan the logs line by line and extract matching entries.",
         "Once extracted, summarize the key events or issues associated with this customer.",
-        "If this customer has passed the validation process, do nothing. Otherwise, use the knowledge search tool to look up the meaning and context of the identified issues.",
-        "Finally, report your findings and provide a clear summary of the customer’s issue.",
+        #"If this customer has passed the validation process, do nothing. Otherwise, use the knowledge search tool to look up the meaning and context of the identified issues.",
+        #"Finally, report your findings and provide a clear summary of the customer’s issue.",
     ]
     submit_prompts(agent, user_prompts)
