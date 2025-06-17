@@ -41,27 +41,27 @@ def parse_log_message(raw_log: str) -> str:
 
 
 @client_tool
-def query_loki_logs(namespace: str, container_name: str, hours: str = '1') -> str:
+def query_loki_logs(namespace: str, container_name: str, minutes: str = '60') -> str:
     """Query logs from a namespace and container in Loki with enhanced JSON parsing.
     :param namespace: Kubernetes namespace name
     :param container_name: Container name to query logs from
-    :param hours: Age of oldest logs to filter in hours
+    :param minutes: Age of oldest logs to filter in minutes
     :returns: Log messages
     """
     logger.info(
         f'loki function called with: namespace={namespace}, '
-        f'container_name={container_name}, hours={hours}')
+        f'container_name={container_name}, minutes={minutes}')
     try:
         print(
             f"🔍 Querying Loki logs for namespace: {namespace}, "
-            f"container: {container_name}, hours: {hours}")
+            f"container: {container_name}, minutes: {minutes}")
 
         # Updated token (use your actual token)
         token = os.getenv("TOKEN")
 
         # Calculate time range in ISO format
         now = datetime.now(timezone.utc)
-        start_time = now - timedelta(hours=int(hours))
+        start_time = now - timedelta(minutes=int(minutes))
 
         # Format timestamps as ISO 8601 strings
         start_iso = start_time.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -152,7 +152,7 @@ def query_loki_logs(namespace: str, container_name: str, hours: str = '1') -> st
                         print("📭 No log entries found in results")
                         return_string = (
                             f"❌ No logs found for container '{container_name}' "
-                            f"in namespace '{namespace}' for the last {hours} hour(s)"
+                            f"in namespace '{namespace}' for the last {minutes} minutes(s)"
                         )
                         return return_string
                 else:
