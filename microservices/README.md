@@ -5,9 +5,9 @@ This folder contains four Quarkus-based microservices used for a customer onboar
 ## 📦 Microservices List
 
 - `customer-onboarding-service`
-- `identity-verification-service`
-- `risk-assessment-service`
-- `notification-service`
+- `customer-verification-service`
+- `identity-validation-service`
+- `AML-validation-service`
 
 Each of these services is located in its own subdirectory under `microservices/`.
 
@@ -17,16 +17,16 @@ Each of these services is located in its own subdirectory under `microservices/`
 
 Ensure that you are authenticated to your OpenShift cluster and have the appropriate project selected.
 
-cd customer-onboarding-service
+cd CustomerOnboardingService
 mvn clean install -Dquarkus.openshift.deploy=true
 
-cd ../identity-verification-service
+cd ../CustomerValidationService
 mvn clean install -Dquarkus.openshift.deploy=true
 
-cd ../risk-assessment-service
+cd ../IdentityValidationService
 mvn clean install -Dquarkus.openshift.deploy=true
 
-cd ../notification-service
+cd ../AmlValidationService
 mvn clean install -Dquarkus.openshift.deploy=true
 
 ---
