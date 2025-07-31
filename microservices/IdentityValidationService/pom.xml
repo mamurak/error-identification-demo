@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<modelVersion>4.0.0</modelVersion>
+
+<groupId>com.redhat.lab</groupId>
+<artifactId>identity-validation-service</artifactId>
+<version>0.0.1</version>
+
+<properties>
+    <skipITs>true</skipITs>
+    <compiler-plugin.version>3.12.1</compiler-plugin.version>
+    <failsafe.useModulePath>false</failsafe.useModulePath>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+    <quarkus.platform.group-id>com.redhat.quarkus.platform</quarkus.platform.group-id>
+    <quarkus.platform.version>3.8.6.redhat-00005</quarkus.platform.version>
+    <surefire-plugin.version>3.1.2</surefire-plugin.version>
+    
+    <!--
+    ==========================================================================
+    === Jolokia agent configuration for the connection with Hawtio Online
+    ==========================================================================
+    
+    It should use HTTPS and SSL client authentication at minimum.
+    The client principal should match those the Hawtio Online instance
+    provides (the default is `hawtio-online.hawtio.svc`).
+    -->
+    <jolokia.protocol>https</jolokia.protocol>
+    <jolokia.host>*</jolokia.host>
+    <jolokia.port>8778</jolokia.port>
+    <jolokia.useSslClientAuthentication>true</jolokia.useSslClientAuthentication>
+    <jolokia.caCert>/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt</jolokia.caCert>
+    <jolokia.clientPrincipal.1>cn=hawtio-online.hawtio.svc</jolokia.clientPrincipal.1>
+    <jolokia.extendedClientCheck>true</jolokia.extendedClientCheck>
+    <jolokia.discoveryEnabled>false</jolokia.discoveryEnabled>
+    <jolokia-version>2.1.0</jolokia-version>
+</properties>
+
+<repositories>
+    <repository>
+        <id>redhat</id>
+        <url>https://maven.repository.redhat.com/ga</url>
+    </repository>
+</repositories>
+<pluginRepositories>
+    <pluginRepository>
+        <id>redhat</id>
+        <url>https://maven.repository.redhat.com/ga</url>
+    </pluginRepository>
+</pluginRepositories>
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>${quarkus.platform.group-id}</groupId>
+            <artifactId>${quarkus.platform.artifact-id}</artifactId>
+            <version>${quarkus.platform.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <dependency>
+            <groupId>${quarkus.platform.group-id}</groupId>
+            <artifactId>quarkus-camel-bom</artifactId>
+            <version>${quarkus.platform.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <!-- basic set of dependencies for any use case-->
+    
+    <!-- quarkus dependencies -->
+    <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-openshift</artifactId>
+    </dependency>
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-exporter-logging</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-opentelemetry</artifactId>
+</dependency>
+  <!-- <dependency>
+  <groupId>io.opentelemetry</groupId>
+  <artifactId>opentelemetry-extension-jaeger-propagator</artifactId>
+  <version>1.22.1</version>
+</dependency>
+-->
+
+<dependency>
+    <groupId>org.apache.camel.quarkus</groupId>
+    <artifactId>camel-quarkus-jsonpath</artifactId>
+</dependency>
+
+    <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-junit5</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-micrometer-registry-prometheus</artifactId>
+    </dependency>
+    
+    <dependency>
+  <groupId>io.opentelemetry</groupId>
+  <artifactId>opentelemetry-exporter-otlp</artifactId>
+</dependency>
+    <dependency>
+  <groupId>com.squareup.okhttp3</groupId>
+  <artifactId>okhttp</artifactId>
+  <version>4.12.0</version> <!-- or the version compatible with your OTEL setup -->
+</dependency>
+<dependency>
+  <groupId>io.opentelemetry</groupId>
+  <artifactId>opentelemetry-extension-trace-propagators</artifactId>
+</dependency>
+    
+    <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-resteasy</artifactId>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.apache.camel.quarkus</groupId>
+        <artifactId>camel-quarkus-core</artifactId>
+    </dependency>
+      <dependency>
+        <groupId>org.apache.camel.quarkus</groupId>
+        <artifactId>camel-quarkus-mock</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel.quarkus</groupId>
+        <artifactId>camel-quarkus-yaml-dsl</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel.quarkus</groupId>
+        <artifactId>camel-quarkus-debug</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel.quarkus</groupId>
+        <artifactId>camel-quarkus-microprofile-health</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel.quarkus</groupId>
+        <artifactId>camel-quarkus-platform-http</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel.quarkus</groupId>
+        <artifactId>camel-quarkus-micrometer</artifactId>
+    </dependency>      
+    
+    <!-- specific to this project use case -->
+    <dependency>
+        <groupId>org.apache.camel.quarkus</groupId>
+        <artifactId>camel-quarkus-timer</artifactId>
+    </dependency>
+     <dependency>
+  <groupId>org.apache.camel.quarkus</groupId>
+  <artifactId>camel-quarkus-jackson</artifactId>
+</dependency>
+ 
+    
+    <!-- Mandatory for enabling Camel management via JMX / Hawtio -->
+    <dependency>
+        <groupId>org.apache.camel.quarkus</groupId>
+        <artifactId>camel-quarkus-management</artifactId>
+    </dependency>  
+    <!-- Include the jolokia agent jvm for access to JMX beans.  -->
+    <dependency>
+        <groupId>org.jolokia</groupId>
+        <artifactId>jolokia-agent-jvm</artifactId>
+        <version>${jolokia-version}</version>
+        <classifier>javaagent</classifier>
+    </dependency>
+    
+</dependencies>
+
+<build>
+    <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+        </resource>
+    </resources>
+    <plugins>
+        <plugin>
+            <groupId>${quarkus.platform.group-id}</groupId>
+            <artifactId>quarkus-maven-plugin</artifactId>
+            <version>${quarkus.platform.version}</version>
+            <extensions>true</extensions>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>build</goal>
+                        <goal>generate-code</goal>
+                        <goal>generate-code-tests</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>${compiler-plugin.version}</version>
+            <configuration>
+                <compilerArgs>
+                    <arg>-parameters</arg>
+                </compilerArgs>
+            </configuration>
+        </plugin>
+        <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${surefire-plugin.version}</version>
+            <configuration>
+                <systemPropertyVariables>
+                    <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                    <maven.home>${maven.home}</maven.home>
+                </systemPropertyVariables>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+
+
+
+</project>

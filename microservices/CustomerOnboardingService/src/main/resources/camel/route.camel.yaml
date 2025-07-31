@@ -1,0 +1,36 @@
+- route:
+    id: CustomerOnboarding-route
+    from:
+      id: from-3851
+      uri: platform-http
+      parameters:
+        path: /
+      steps:
+        - convertBodyTo:
+            type: java.lang.String
+        - log:
+            id: log-3786
+            disabled: false
+            message: validation customer..  ${body}
+        - log:
+            id: log-3732
+            message: body=${body}
+        - setHeader:
+            id: setHeader-2294
+            expression:
+              constant:
+                expression: application/json
+            name: Content-Type
+        - to:
+            uri: http
+            parameters:
+              bridgeEndpoint: true
+              httpUri: customer-validation-service.customer-onboarding.svc.cluster.local
+        - log: "Received Customer Validation response: | ${body}"
+- routeConfiguration:
+    id: routeConfiguration-1522
+    intercept:
+      - intercept:
+          steps:
+            - process:
+                ref: messageProcessor
